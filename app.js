@@ -1,0 +1,7 @@
+const API=location.hostname==='localhost'?'http://localhost:3000/api':'/api';
+const demoPosts=[{school:'Prempeh College',title:'Campus update',body:'Share verified school news and community updates here.'},{school:'KNUST',title:'Sports update',body:'Students can post sports, events and achievements.'}];
+const schools=[['Prempeh College',1],['KNUST',2],['Opoku Ware School',3],['Mfantsipim School',4],['Wesley Girls High School',5],['Achimota School',6]];
+function renderPosts(posts){document.querySelector('#posts').innerHTML=posts.map(p=>`<article class="card"><small>${p.school||'Ghana'}</small><h3>${p.title}</h3><p>${p.body}</p></article>`).join('')}
+function renderSchools(){document.querySelector('#schools').innerHTML=schools.map(([name,n])=>`<article class="card"><div class="rank">#${n}</div><h3>${name}</h3><p>Community ranking profile</p></article>`).join('')}
+async function load(){renderSchools();try{const r=await fetch(API+'/posts');if(r.ok)renderPosts(await r.json());else renderPosts(demoPosts)}catch(e){renderPosts(demoPosts)}}
+document.querySelector('#postForm').addEventListener('submit',async e=>{e.preventDefault();const data={school:school.value,title:title.value,body:body.value};try{const r=await fetch(API+'/posts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});if(!r.ok)throw new Error();status.textContent='Posted successfully.';e.target.reset();load()}catch(err){status.textContent='Demo mode: backend is not connected yet.'}});load();
